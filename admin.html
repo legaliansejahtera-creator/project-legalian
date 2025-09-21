@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin • Legalian.id</title>
+  <link rel="stylesheet" href="styles/style.css"/>
+  <!-- SheetJS (XLSX) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Admin Panel • <span class="muted">Legalian.id</span></div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="harga">Master Harga</button>
+      <button class="tab" data-tab="ahs">Master AHS</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ======= Master Harga (kept simple; tidak diubah logika yang lama) ======= -->
+    <section id="tab-harga" class="tabpane active">
+      <div class="card">
+        <h2>Master Harga (placeholder aman)</h2>
+        <p>
+          Bagian ini <b>tidak dimodifikasi</b> pada paket ini. Jika Anda ingin mempertahankan
+          engine Master Harga Anda yang sekarang, cukup <code>merge</code> file skrip lama ke dalam
+          halaman ini. Paket ini fokus pada pembaruan <b>Master AHS</b>.
+        </p>
+        <p class="hint">
+          Catatan: tombol & format ekspor 3-sheet (Upah/Bahan/Alat) yang Anda punya sebelumnya
+          bisa tetap digunakan. Paket ini tidak memaksa perubahan di sini.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======= Master AHS (baru) ======= -->
+    <section id="tab-ahs" class="tabpane">
+      <div class="grid-2">
+        <div class="card">
+          <h2>Master AHS</h2>
+
+          <div class="row">
+            <label>Bidang</label>
+            <select id="ahsBidang" class="input">
+              <option value="umum">Umum</option>
+              <option value="geoteknik">Geoteknik</option>
+              <option value="angkutan">Angkutan</option>
+              <option value="sewa">Sewa</option>
+            </select>
+          </div>
+
+          <div class="row">
+            <label>Pencarian</label>
+            <input id="ahsSearch" class="input" placeholder="cari nama/versi/notes..." />
+          </div>
+
+          <div class="toolbar">
+            <button id="btnTpl1" class="btn">Template AHSP (1 item)</button>
+            <button id="btnTpl10" class="btn">Template AHSP (10 Bidang)</button>
+            <label for="impFile" class="btn light">Impor XLSX</label>
+            <input id="impFile" type="file" accept=".xlsx" style="display:none"/>
+            <button id="btnEks" class="btn success">Ekspor XLSX</button>
+          </div>
+
+          <div id="ahsList" class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nama Pekerjaan</th>
+                  <th>Versi</th>
+                  <th>Prov. Scope</th>
+                  <th>Keterangan</th>
+                  <th>Koef (T/B/A)</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="ahsTbody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Tambah / Edit AHS</h3>
+          <form id="ahsForm" onsubmit="return false;">
+            <div class="row"><label>Nama pekerjaan</label><input id="fNama" class="input"/></div>
+            <div class="row"><label>Versi</label><input id="fVersi" class="input" placeholder="mis. 2025.1"/></div>
+            <div class="row"><label>Provinsi scope (koma)</label><input id="fScope" class="input" placeholder="Aceh, Sumut"/></div>
+            <div class="row"><label>Catatan/rumus (opsional)</label><textarea id="fNotes" class="input"></textarea></div>
+            <div class="row"><label>Kategori</label>
+              <select id="fKategori" class="input">
+                <option value="standar">standar</option>
+                <option value="angkutan">angkutan</option>
+                <option value="khusus">khusus (geoteknik/sumur bor)</option>
+                <option value="sewa">sewa</option>
+              </select>
+            </div>
+
+            <div class="subcard">
+              <h4>Rincian Komponen</h4>
+              <div class="subrow-title">Tenaga Kerja</div>
+              <div id="wrapTenaga"></div>
+              <button type="button" class="btn tiny" onclick="AHSEngine.addRow('tenaga')">+ Tambah Tenaga</button>
+
+              <div class="subrow-title mt">Bahan</div>
+              <div id="wrapBahan"></div>
+              <button type="button" class="btn tiny" onclick="AHSEngine.addRow('bahan')">+ Tambah Bahan</button>
+
+              <div class="subrow-title mt">Alat</div>
+              <div id="wrapAlat"></div>
+              <button type="button" class="btn tiny" onclick="AHSEngine.addRow('alat')">+ Tambah Alat</button>
+            </div>
+
+            <div class="actions">
+              <button id="btnReset" type="button" class="btn light">Reset</button>
+              <button id="btnSimpan" type="submit" class="btn primary">Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    © 2025 Legalian.id
+  </footer>
+
+  <script src="core/storage.js"></script>
+  <script src="core/utils.js"></script>
+  <script src="core/admin.masterAHS.v3.js"></script>
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tabpane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
